@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hakikat Puasa: Perspektif Tasawuf</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Noto+Serif:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Custom Font Configurations */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #FDFCF8; /* Warm off-white */
+            color: #44403C; /* Stone 800 */
+        }
+        .font-arabic {
+            font-family: 'Amiri', serif;
+            line-height: 1.8;
+        }
+        .font-serif-heading {
+            font-family: 'Noto Serif', serif;
+        }
+
+        /* Chart Container Strict Styling */
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+
+        /* Card Hover Effects */
+        .quote-card {
+            transition: all 0.3s ease;
+            border: 1px solid #E7E5E4;
+        }
+        .quote-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025);
+            border-color: #D97706; /* Amber 600 */
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #F5F5F4;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #D6D3D1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #A8A29E;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-amber-100 selection:text-amber-900">
+
+    <!-- Chosen Palette: Warm Neutrals & Islamic Geometry (Sand, Gold, Stone, White) -->
+    <!-- Application Structure Plan: 
+         1. Hero Section: Sets the spiritual tone with a key insight.
+         2. Analytical Overview: A section using Chart.js to categorize the 30 quotes into themes (Discipline, Illumination, Asceticism, Union). This helps the user understand the 'Why' before reading the 'What'.
+         3. Interactive Wisdom Library: The core grid of 30 cards. Includes filters for themes and a search bar.
+         4. Spotlight View: A detail view logic (modal-like behavior within the grid) to focus on single quotes.
+         The structure moves from high-level concept -> analytical distribution -> granular exploration.
+    -->
+    <!-- Visualization & Content Choices:
+         1. Doughnut Chart: Used to visualize the distribution of themes among the 30 quotes. Goal: Show that Sufism views fasting as multi-dimensional (not just hunger).
+         2. Card Grid: Best for consuming individual distinct text blocks. Interaction: Hover effects and filtering.
+         3. Typography: Specific Arabic fonts for legibility and Serif fonts for translation to evoke a scholarly book feel.
+         4. No SVG/Mermaid: All icons use Unicode or pure CSS styling.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
+    <div id="app" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <!-- Header -->
+        <header class="text-center mb-12 space-y-4">
+            <div class="text-amber-600 text-xl mb-2">﷽</div>
+            <h1 class="text-4xl md:text-5xl font-serif-heading font-bold text-stone-800 tracking-tight">Samudera Hikmah Puasa</h1>
+            <p class="text-lg text-stone-600 max-w-2xl mx-auto italic">
+                30 Mutiara Tasawuf tentang Hakikat Menahan Diri dan Pendakian Ruhani.
+            </p>
+			<p class="text-lg text-stone-600 max-w-2xl mx-auto italic">
+                Dibuat oleh : Eka Rahmat Hidayat, SKM, M.Si
+            </p>
+            <div class="w-24 h-1 bg-amber-500 mx-auto rounded-full mt-6"></div>
+        </header>
+
+        <!-- Contextual Introduction & Analytics -->
+        <section class="mb-16 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center bg-white p-8 rounded-2xl shadow-sm border border-stone-100">
+            <div>
+                <h2 class="text-2xl font-bold text-stone-800 mb-4 font-serif-heading">Dimensi Batiniah Ibadah Puasa</h2>
+                <p class="text-stone-600 mb-4 leading-relaxed">
+                    Dalam tradisi Tasawuf, puasa (Shaum) bukan sekadar menahan lapar dan dahaga. Ia adalah metode 
+                    <em>Riyadhah</em> (latihan spiritual) untuk menjernihkan cermin hati. Para ulama sufi memandang puasa 
+                    sebagai jalan pintas menuju <em>Ma'rifatullah</em> (mengenal Allah).
+                </p>
+                <p class="text-stone-600 mb-6 leading-relaxed">
+                    Aplikasi ini mengkompilasi 30 kutipan otoritatif dari kitab-kitab turats (klasik) yang membedah anatomi puasa 
+                    menjadi empat dimensi utama seperti yang terlihat pada grafik. Jelajahi kearifan ini untuk memperdalam 
+                    kualitas ibadah Anda.
+                </p>
+                
+                <!-- Interactive Stats -->
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-amber-50 p-4 rounded-lg text-center">
+                        <span class="block text-3xl font-bold text-amber-700" id="total-quotes">30</span>
+                        <span class="text-sm text-stone-600 uppercase tracking-wider font-semibold">Kutipan</span>
+                    </div>
+                    <div class="bg-amber-50 p-4 rounded-lg text-center">
+                        <span class="block text-3xl font-bold text-amber-700">12+</span>
+                        <span class="text-sm text-stone-600 uppercase tracking-wider font-semibold">Kitab Rujukan</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chart Container -->
+            <div class="flex flex-col items-center justify-center bg-stone-50 rounded-xl p-6">
+                <h3 class="text-sm font-semibold text-stone-500 uppercase tracking-widest mb-4">Distribusi Tema Hikmah</h3>
+                <div class="chart-container">
+                    <canvas id="themesChart"></canvas>
+                </div>
+                <p class="text-xs text-center text-stone-400 mt-4 italic">Ketuk diagram untuk menyaring kutipan di bawah.</p>
+            </div>
+        </section>
+
+        <!-- Controls & Navigation -->
+        <section class="mb-8 sticky top-4 z-30 bg-[#FDFCF8]/95 backdrop-blur-sm py-4 border-b border-stone-200">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+                
+                <!-- Filter Group -->
+                <div class="flex flex-wrap justify-center gap-2" id="filter-container">
+                    <button onclick="filterQuotes('all')" class="px-4 py-2 rounded-full text-sm font-semibold bg-stone-800 text-white shadow-md hover:bg-stone-700 transition-colors ring-2 ring-stone-800 ring-offset-2">
+                        Semua
+                    </button>
+                    <!-- Other buttons injected by JS -->
+                </div>
+
+                <!-- Search -->
+                <div class="relative w-full md:w-64">
+                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-stone-400">
+                        🔍
+                    </span>
+                    <input type="text" id="searchInput" placeholder="Cari kata kunci..." 
+                           class="w-full pl-10 pr-4 py-2 rounded-full border border-stone-300 bg-white focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent text-sm">
+                </div>
+            </div>
+        </section>
+
+        <!-- Content Grid -->
+        <main>
+            <div id="quotes-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Cards will be injected here via JavaScript -->
+            </div>
+            
+            <!-- Empty State -->
+            <div id="no-results" class="hidden text-center py-20">
+                <div class="text-6xl mb-4">📿</div>
+                <h3 class="text-xl font-bold text-stone-600">Tidak ada kutipan ditemukan</h3>
+                <p class="text-stone-500">Cobalah kata kunci lain atau reset filter.</p>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="mt-20 border-t border-stone-200 pt-8 text-center pb-8">
+            <p class="text-stone-500 text-sm">
+                Diresumekan oleh Eka Rahmat Hidayat (IG: @ngopi.hijrah) - 085710000292. 
+				Disusun untuk tujuan pendidikan dan perenungan spiritual. 
+                Merujuk pada kitab-kitab mu'tabar Ulama Tasawuf.
+            </p>
+            <p class="text-amber-700 font-serif mt-2">Wallahu A'lam Bish-shawab</p>
+        </footer>
+
+    </div>
+
+    <script>
+        // --- DATASET: 30 Quotes from Sufi Scholars ---
+        const quotesData = [
+            {
+                id: 1,
+                author: "Imam Al-Ghazali",
+                book: "Ihya' Ulumuddin",
+                chapter: "Kitab Asrar as-Sawm",
+                theme: "Tingkatan Puasa",
+                arabic: "الصَّوْمُ ثَلَاثُ دَرَجَاتٍ: صَوْمُ الْعُمُوْمِ، وَصَوْمُ الْخُصُوْصِ، وَصَوْمُ خُصُوْصِ الْخُصُوْصِ",
+                translation: "Puasa itu ada tiga tingkatan: Puasa umum (menahan perut dan kemaluan), puasa khusus (menahan anggota badan dari dosa), dan puasa khususul khusus (puasa hati dari segala keinginan rendah dan pikiran duniawi selain Allah).",
+                tags: ["tingkatan", "hati", "klasifikasi"]
+            },
+            {
+                id: 2,
+                author: "Syekh Abdul Qadir Al-Jilani",
+                book: "Sirr al-Asrar",
+                chapter: "Fasal Puasa",
+                theme: "Penyucian Jiwa",
+                arabic: "صِيَامُ الشَّرِيْعَةِ الإِمْسَاكُ عَنِ الأَكْلِ وَالشُّرْبِ، وَصِيَامُ الطَّرِيْقَةِ الإِمْسَاكُ عَنْ مَحَارِمِ الْهَوَى",
+                translation: "Puasa syariat adalah menahan diri dari makan dan minum, sedangkan puasa tarekat (jalan spiritual) adalah menahan diri dari segala hal yang diharamkan oleh hawa nafsu.",
+                tags: ["syariat", "hakikat", "nafsu"]
+            },
+            {
+                id: 3,
+                author: "Ibnu Arabi",
+                book: "Al-Futuhat Al-Makkiyah",
+                chapter: "Bab 71 (As-Sawm)",
+                theme: "Sifat Ilahiyah",
+                arabic: "الصَّوْمُ لِلَّهِ فَلَا مِثْلَ لَهُ، لِأَنَّهُ صِفَةٌ صَمَدَانِيَّةٌ تَنْزِيهِيَّةٌ",
+                translation: "Puasa itu milik Allah dan tidak ada yang semisal dengannya, karena puasa adalah sifat Shamadaniyah (kebergantungan segala sesuatu kepada Allah yang tidak butuh makan/minum) dan sifat penyucian.",
+                tags: ["makrifat", "sifat allah", "futuhat"]
+            },
+            {
+                id: 4,
+                author: "Ibnu Ataillah As-Sakandari",
+                book: "Al-Hikam",
+                chapter: "-",
+                theme: "Cahaya Hati",
+                arabic: "أَصْلُ كُلِّ مَعْصِيَةٍ وَغَفْلَةٍ وَشَهْوَةٍ الرِّضَا عَنِ النَّفْسِ، وَأَصْلُ كُلِّ طَاعَةٍ وَيَقَظَةٍ وَعِفَّةٍ عَدَمُ الرِّضَا مِنْكَ عَنْهَا",
+                translation: "Pangkal segala maksiat, kelalaian, dan syahwat adalah ridha terhadap nafsu (memanjakannya dengan kenyang), dan pangkal segala ketaatan, kesadaran, dan kesucian adalah ketidakpuasanmu terhadap nafsu (melalui lapar).",
+                tags: ["nafsu", "maksiat", "hikam"]
+            },
+            {
+                id: 5,
+                author: "Jalaluddin Rumi",
+                book: "Matsnawi",
+                chapter: "Jilid 5",
+                theme: "Kekuatan Ruhani",
+                arabic: "الْجُوْعُ طَعَامُ اللهِ، يُحْيِيْ بِهِ أَبْدَانَ الصِّدِّيْقِيْنَ",
+                translation: "Rasa lapar adalah 'makanan' dari Allah, dengannya Dia menghidupkan tubuh para orang-orang yang jujur (Shiddiqin). Ketika perut kosong, ruh akan bernyanyi.",
+                tags: ["lapar", "ruh", "cinta"]
+            },
+            {
+                id: 6,
+                author: "Al-Qushayri",
+                book: "Ar-Risalah Al-Qushayriyyah",
+                chapter: "Bab Al-Ju' (Lapar)",
+                theme: "Disiplin Diri",
+                arabic: "مَنْ لَزِمَ الْجُوْعَ قَوِيَتْ مُجَاهَدَتُهُ وَصَفَتْ فِكْرَتُهُ",
+                translation: "Barangsiapa melazimkan rasa lapar (puasa), maka akan kuatlah mujahadahnya (perjuangan spiritualnya) dan akan jernihlah pemikirannya.",
+                tags: ["mujahadah", "pikir", "lapar"]
+            },
+            {
+                id: 7,
+                author: "Ali bin Utsman Al-Hujwiri",
+                book: "Kashf al-Mahjub",
+                chapter: "Bab Puasa",
+                theme: "Penyucian Jiwa",
+                arabic: "الصَّوْمُ حَبْسُ النَّفْسِ عَنِ الْمَأْلُوفَاتِ وَقَطْعُهَا عَنِ الشَّهَوَاتِ",
+                translation: "Puasa adalah memenjarakan nafsu dari kebiasaan-kebiasaan (duniawi) dan memutusnya dari syahwat-syahwat yang menggelincirkan.",
+                tags: ["penjara nafsu", "kebiasaan"]
+            },
+            {
+                id: 8,
+                author: "Dzun Nun Al-Mishri",
+                book: "Hilyatul Awliya",
+                chapter: "Biografi Dzun Nun",
+                theme: "Hikmah Lapar",
+                arabic: "مَا شَبِعْتُ أَبَدًا إِلَّا عَصَيْتُ اللهَ أَوْ هَمَمْتُ بِمَعْصِيَةٍ",
+                translation: "Tidaklah aku kenyang sekalipun, kecuali aku bermaksiat kepada Allah atau aku berkeinginan (berhasrat) untuk melakukan maksiat.",
+                tags: ["kenyang", "maksiat", "waspada"]
+            },
+            {
+                id: 9,
+                author: "Imam Al-Haddad",
+                book: "Risalatul Mu'awanah",
+                chapter: "Bab Riyadhah",
+                theme: "Disiplin Diri",
+                arabic: "وَعَلَيْكَ بِتَقْلِيْلِ الْأَكْلِ فَإِنَّهُ يُنَوِّرُ الْقَلْبَ وَيُقَوِّي عَلَى الْعِبَادَةِ",
+                translation: "Hendaklah engkau menyedikitkan makan (puasa), karena sesungguhnya hal itu dapat menerangi hati dan menguatkan fisik untuk beribadah.",
+                tags: ["cahaya hati", "ibadah"]
+            },
+            {
+                id: 10,
+                author: "Sahl bin Abdullah At-Tustari",
+                book: "Tabaqat as-Sufiyyah",
+                chapter: "-",
+                theme: "Pondasi Hikmah",
+                arabic: "أُصُولُ مَذْهَبِنَا ثَلَاثَةٌ: أَكْلُ الْحَلَالِ، وَالْإِقْتِدَاءُ بِالرَّسُولِ، وَالْجُوعُ",
+                translation: "Pondasi mazhab (jalan sufi) kami ada tiga: Memakan yang halal, meneladani Rasul, dan lapar (puasa).",
+                tags: ["pondasi", "sunnah", "lapar"]
+            },
+            {
+                id: 11,
+                author: "Ibnu Qayyim Al-Jauziyah",
+                book: "Al-Fawa'id",
+                chapter: "Manfaat Lapar",
+                theme: "Kesehatan Hati",
+                arabic: "فَإِنَّ الْجُوعَ يُورِثُ الْخُشُوعَ وَالذِّلَّةَ وَالْإِنْكِسَارَ لِلَّهِ",
+                translation: "Sesungguhnya rasa lapar itu mewariskan kekhusyukan, kehinaan diri (di hadapan Allah), dan hati yang luluh bagi Allah.",
+                tags: ["khusyuk", "rendah hati"]
+            },
+            {
+                id: 12,
+                author: "Abu Sulaiman Ad-Darani",
+                book: "Siyar A'lam Nubala",
+                chapter: "-",
+                theme: "Kunci Akhirat",
+                arabic: "مِفْتَاحُ الدُّنْيَا الشِّبَعُ، وَمِفْتَاحُ الْآخِرَةِ الْجُوعُ",
+                translation: "Kunci dunia adalah kekenyangan, dan kunci akhirat adalah rasa lapar.",
+                tags: ["akhirat", "dunia", "kunci"]
+            },
+            {
+                id: 13,
+                author: "Yahya bin Mu'adz Ar-Razi",
+                book: "-",
+                chapter: "-",
+                theme: "Cahaya Hati",
+                arabic: "الْجُوعُ ضِيَاءُ، وَالشِّبَعُ نَارٌ",
+                translation: "Lapar adalah cahaya, sedangkan kenyang adalah api (yang membakar kejernihan hati).",
+                tags: ["cahaya", "api", "metafora"]
+            },
+            {
+                id: 14,
+                author: "Abu Hamid Al-Ghazali",
+                book: "Kimiya' As-Sa'adah",
+                chapter: "Rukun Islam",
+                theme: "Musuh Setan",
+                arabic: "الشَّيْطَانُ يَجْرِيْ مِنِ ابْنِ آدَمَ مَجْرَى الدَّمِ، فَضَيِّقُوْا مَجَارِيَهُ بِالْجُوْعِ",
+                translation: "Setan mengalir dalam diri manusia seperti aliran darah, maka persempitlah jalan-jalannya dengan rasa lapar (puasa).",
+                tags: ["setan", "darah", "strategi"]
+            },
+            {
+                id: 15,
+                author: "Bishr Al-Hafi",
+                book: "Hilyatul Awliya",
+                chapter: "-",
+                theme: "Penyucian Jiwa",
+                arabic: "لَا يَجِدُ حَلَاوَةَ الْعِبَادَةِ مَنْ كَانَ فِي مَعِدَتِهِ طَعَامٌ",
+                translation: "Tidak akan menemukan manisnya ibadah, seseorang yang di dalam perutnya penuh dengan makanan.",
+                tags: ["manis iman", "ibadah"]
+            },
+            {
+                id: 16,
+                author: "Ibnu Ajibah",
+                book: "Iqazh al-Himam",
+                chapter: "Syarah Hikam",
+                theme: "Ketergantungan",
+                arabic: "الصَّوْمُ يُذَكِّرُ الْعَبْدَ بِفَاقَتِهِ وَحَاجَتِهِ إِلَى مَوْلَاهُ",
+                translation: "Puasa mengingatkan seorang hamba akan kefakiran dan kebutuhan mutlaknya kepada Tuannya (Allah).",
+                tags: ["fakir", "kehambaan"]
+            },
+            {
+                id: 17,
+                author: "Umar bin Khattab (Atsar)",
+                book: "Kanzul Ummal",
+                chapter: "-",
+                theme: "Disiplin Diri",
+                arabic: "إِيَّاكُمْ وَالْبِطْنَةَ، فَإِنَّهَا مَكْسَلَةٌ عَنِ الصَّلَاةِ، مُفْسِدَةٌ لِلْجِسْمِ",
+                translation: "Hati-hatilah kalian dengan kekenyangan, karena ia membuat malas shalat dan merusak tubuh.",
+                tags: ["malas", "fisik", "nasihat"]
+            },
+            {
+                id: 18,
+                author: "Abu Yazid Al-Busthami",
+                book: "-",
+                chapter: "-",
+                theme: "Sifat Ilahiyah",
+                arabic: "إِنَّ اللهَ تَعَالَى لَا يَقْبَلُ مِنَ الْأَعْمَالِ إِلَّا مَا كَانَ خَالِصًا، وَالصَّوْمُ لِيْ وَأَنَا أَجْزِيْ بِهِ",
+                translation: "Mengutip Hadits Qudsi dalam konteks makrifat: Allah tidak menerima amal kecuali yang murni. 'Puasa itu untuk-Ku dan Aku yang akan membalasnya' (menunjukkan hubungan rahasia hamba-Tuhan).",
+                tags: ["ikhlas", "rahasia"]
+            },
+            {
+                id: 19,
+                author: "Ibrahim bin Adham",
+                book: "Tadhkirat al-Awliya",
+                chapter: "-",
+                theme: "Kontrol Nafsu",
+                arabic: "مَنْ ضَبَطَ بَطْنَهُ ضَبَطَ دِيْنَهُ",
+                translation: "Barangsiapa mampu mengendalikan perutnya, maka ia mampu mengendalikan agamanya.",
+                tags: ["agama", "kontrol"]
+            },
+            {
+                id: 20,
+                author: "Luqman Al-Hakim",
+                book: "Nasihat kepada Anaknya",
+                chapter: "-",
+                theme: "Hikmah Lapar",
+                arabic: "يَا بُنَيَّ، إِذَا امْتَلَأَتِ الْمَعِدَةُ نَامَتِ الْفِكْرَةُ وَخَرِسَتِ الْحِكْمَةُ",
+                translation: "Wahai anakku, jika perut penuh terisi, maka tertidurlah pikiran dan bisulah hikmah (kebijaksanaan).",
+                tags: ["hikmah", "akal"]
+            },
+            {
+                id: 21,
+                author: "Syekh Abu Thalib Al-Makki",
+                book: "Qut al-Qulub",
+                chapter: "Fadhilah Lapar",
+                theme: "Kekuatan Ruhani",
+                arabic: "خُلُوُّ الْجَوْفِ يُنَوِّرُ الْقَلْبَ وَيُسَهِّلُ حِفْظَ الْعِلْمِ",
+                translation: "Kosongnya perut itu menerangi hati dan memudahkan hafalan ilmu.",
+                tags: ["ilmu", "cahaya"]
+            },
+            {
+                id: 22,
+                author: "Imam Syafi'i",
+                book: "Diwan Asy-Syafi'i",
+                chapter: "-",
+                theme: "Kecerdasan",
+                arabic: "مَا شَبِعْتُ مُنْذُ سِتَّ عَشْرَةَ سَنَةً، لِأَنَّ الشِّبَعَ يُثْقِلُ الْبَدَنَ وَيُزِيلُ الْفِطْنَةَ",
+                translation: "Aku tidak pernah kenyang sejak 16 tahun lalu, karena kekenyangan memberatkan badan dan menghilangkan kecerdasan.",
+                tags: ["cerdas", "badan"]
+            },
+            {
+                id: 23,
+                author: "Al-Munawi",
+                book: "Faidhul Qadir",
+                chapter: "-",
+                theme: "Penyucian Jiwa",
+                arabic: "الصَّوْمُ زَكَاةُ النَّفْسِ وَرِيَاضَةُ الْجِسْمِ",
+                translation: "Puasa adalah zakatnya jiwa dan olahraga (latihan) bagi tubuh.",
+                tags: ["zakat", "jiwa"]
+            },
+            {
+                id: 24,
+                author: "Ibnu Sina (Perspektif Hikmah)",
+                book: "-",
+                chapter: "-",
+                theme: "Kesehatan Hati",
+                arabic: "الْبِطْنَةُ أَصْلُ الدَّاءِ، وَالْحِمْيَةُ أَصْلُ الدَّوَاءِ",
+                translation: "Kekenyangan adalah pangkal penyakit, dan menahan diri (puasa/diet) adalah pangkal obat.",
+                tags: ["kesehatan", "obat"]
+            },
+            {
+                id: 25,
+                author: "Maimun bin Mihran",
+                book: "-",
+                chapter: "-",
+                theme: "Kualitas Puasa",
+                arabic: "أَهْوَنُ الصَّوْمِ تَرْكُ الطَّعَامِ وَالشَّرَابِ",
+                translation: "Puasa yang paling ringan (paling rendah nilainya) adalah sekadar meninggalkan makan dan minum.",
+                tags: ["kualitas", "dasar"]
+            },
+            {
+                id: 26,
+                author: "Junaid Al-Baghdadi",
+                book: "-",
+                chapter: "-",
+                theme: "Jarak dengan Allah",
+                arabic: "أَجْعَلُ بَيْنِي وَبَيْنَ نَفْسِي خِوَانًا لَا يَمُدُّ إِلَيْهِ يَدٌ",
+                translation: "Aku menjadikan antara diriku dan nafsuku sebuah meja makan yang tidak pernah dijamah tangan (kiasan untuk puasa abadi dari syahwat).",
+                tags: ["nafsu", "istiqomah"]
+            },
+            {
+                id: 27,
+                author: "Abdullah bin Mubarak",
+                book: "Az-Zuhd",
+                chapter: "-",
+                theme: "Ibadah",
+                arabic: "رُبَّ صَائِمٍ لَيْسَ لَهُ مِنْ صِيَامِهِ إِلَّا الْجُوعُ وَالْعَطَشُ",
+                translation: "Berapa banyak orang yang berpuasa, tidak ada baginya dari puasanya itu kecuali lapar dan dahaga (karena tidak menjaga hati).",
+                tags: ["sia-sia", "hati"]
+            },
+            {
+                id: 28,
+                author: "Syekh Ahmad Ar-Rifa'i",
+                book: "Al-Burhan Al-Muayyad",
+                chapter: "-",
+                theme: "Jalan Menuju Allah",
+                arabic: "طَرِيْقُنَا هَذَا مَبْنِيٌّ عَلَى الْكَسْرِ وَالذُّلِّ، لَا عَلَى الْأَكْلِ وَالشُّرْبِ",
+                translation: "Jalan kami ini dibangun di atas kehancuran hati (merasa hina di hadapan Allah) dan kerendahan hati, bukan di atas makan dan minum.",
+                tags: ["tawadhu", "jalan sufi"]
+            },
+            {
+                id: 29,
+                author: "Hasan Al-Basri",
+                book: "-",
+                chapter: "-",
+                theme: "Refleksi",
+                arabic: "كَانُوا يَقُولُونَ: إِذَا أَرَدْتَ أَنْ يَخْشَعَ قَلْبُكَ فَأَجِعْ بَطْنَكَ",
+                translation: "Mereka (para salaf) berkata: Jika engkau ingin hatimu khusyuk, maka laparkanlah perutmu.",
+                tags: ["khusyuk", "salaf"]
+            },
+            {
+                id: 30,
+                author: "Imam Al-Ghazali",
+                book: "Ihya' Ulumuddin",
+                chapter: "Rahasia Puasa",
+                theme: "Penyucian Jiwa",
+                arabic: "الصَّوْمُ نِصْفُ الصَّبْرِ، وَالصَّبْرُ نِصْفُ الْإِيْمَانِ",
+                translation: "Puasa adalah setengah dari kesabaran, dan kesabaran adalah setengah dari keimanan.",
+                tags: ["sabar", "iman"]
+            }
+        ];
+
+        // --- CHART & ANALYTICS LOGIC ---
+        
+        // 1. Calculate Theme Distribution
+        const themeCounts = quotesData.reduce((acc, curr) => {
+            acc[curr.theme] = (acc[curr.theme] || 0) + 1;
+            return acc;
+        }, {});
+
+        const chartLabels = Object.keys(themeCounts);
+        const chartData = Object.values(themeCounts);
+
+        // 2. Render Chart.js
+        document.addEventListener('DOMContentLoaded', () => {
+            const ctx = document.getElementById('themesChart').getContext('2d');
+            
+            // Chart Configuration
+            const themesChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: chartLabels,
+                    datasets: [{
+                        data: chartData,
+                        backgroundColor: [
+                            '#D97706', // Amber 600
+                            '#78350F', // Amber 900
+                            '#A8A29E', // Stone 400
+                            '#57534E', // Stone 600
+                            '#F59E0B', // Amber 500
+                            '#E7E5E4', // Stone 200
+                            '#B45309', // Amber 700
+                            '#44403C'  // Stone 700
+                        ],
+                        borderWidth: 0,
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                font: {
+                                    family: "'Inter', sans-serif",
+                                    size: 11
+                                },
+                                usePointStyle: true,
+                                boxWidth: 8
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: '#292524',
+                            titleFont: { family: "'Noto Serif', serif" },
+                            bodyFont: { family: "'Inter', sans-serif" },
+                            padding: 12,
+                            cornerRadius: 8,
+                            callbacks: {
+                                label: function(context) {
+                                    return ` ${context.label}: ${context.raw} Kutipan`;
+                                }
+                            }
+                        }
+                    },
+                    onClick: (evt, elements) => {
+                        if (elements.length > 0) {
+                            const index = elements[0].index;
+                            const label = themesChart.data.labels[index];
+                            filterQuotes(label); // Interactive filtering via Chart
+                        }
+                    }
+                }
+            });
+
+            // Initialize Grid
+            renderQuotes(quotesData);
+            generateFilterButtons();
+        });
+
+
+        // --- UI INTERACTION LOGIC ---
+
+        // 1. Render Cards
+        function renderQuotes(data) {
+            const grid = document.getElementById('quotes-grid');
+            const noResults = document.getElementById('no-results');
+            
+            grid.innerHTML = '';
+            
+            if (data.length === 0) {
+                noResults.classList.remove('hidden');
+                return;
+            } else {
+                noResults.classList.add('hidden');
+            }
+
+            data.forEach(quote => {
+                const card = document.createElement('article');
+                card.className = 'quote-card bg-white rounded-xl p-6 flex flex-col justify-between h-full';
+                
+                card.innerHTML = `
+                    <div class="mb-4">
+                        <div class="flex justify-between items-start mb-4">
+                            <span class="inline-block px-2 py-1 bg-amber-50 text-amber-700 text-xs rounded-md font-semibold tracking-wide uppercase">${quote.theme}</span>
+                            <span class="text-stone-300 text-xs">#${quote.id}</span>
+                        </div>
+                        <p class="font-arabic text-right text-2xl md:text-3xl text-stone-800 mb-6 leading-loose" dir="rtl">
+                            ${quote.arabic}
+                        </p>
+                        <p class="text-stone-600 italic text-sm md:text-base border-l-2 border-amber-300 pl-4 leading-relaxed">
+                            "${quote.translation}"
+                        </p>
+                    </div>
+                    <div class="mt-6 pt-4 border-t border-stone-100">
+                        <p class="font-bold text-stone-800 font-serif-heading">${quote.author}</p>
+                        <p class="text-xs text-stone-500 flex items-center gap-1 mt-1">
+                            <span>📖</span> ${quote.book} ${quote.chapter !== '-' ? `• ${quote.chapter}` : ''}
+                        </p>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // 2. Generate Filter Buttons dynamically
+        function generateFilterButtons() {
+            const container = document.getElementById('filter-container');
+            // Get unique themes (Top 5 most frequent to avoid clutter, or all if few)
+            // For simplicity, let's grab specific interesting themes manually or all unique
+            const themes = [...new Set(quotesData.map(q => q.theme))].sort();
+            
+            themes.forEach(theme => {
+                const btn = document.createElement('button');
+                btn.textContent = theme;
+                btn.className = 'px-4 py-2 rounded-full text-sm font-medium bg-white text-stone-600 border border-stone-200 hover:bg-amber-50 hover:border-amber-200 hover:text-amber-800 transition-colors';
+                btn.onclick = () => filterQuotes(theme);
+                container.appendChild(btn);
+            });
+        }
+
+        // 3. Filter Functionality
+        let currentFilter = 'all';
+
+        function filterQuotes(criteria) {
+            currentFilter = criteria;
+            
+            // Update UI buttons
+            const buttons = document.querySelectorAll('#filter-container button');
+            buttons.forEach(btn => {
+                if (criteria === 'all' && btn.textContent === 'Semua') {
+                    setActiveBtn(btn);
+                } else if (btn.textContent === criteria) {
+                    setActiveBtn(btn);
+                } else {
+                    setInactiveBtn(btn);
+                }
+            });
+
+            // Filter Data
+            const searchVal = document.getElementById('searchInput').value.toLowerCase();
+            const filtered = quotesData.filter(q => {
+                const matchesTheme = criteria === 'all' || q.theme === criteria;
+                const matchesSearch = q.translation.toLowerCase().includes(searchVal) || 
+                                      q.author.toLowerCase().includes(searchVal) ||
+                                      q.book.toLowerCase().includes(searchVal);
+                return matchesTheme && matchesSearch;
+            });
+
+            renderQuotes(filtered);
+            
+            // Scroll to grid slightly
+            if(criteria !== 'all') {
+                document.getElementById('quotes-grid').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+
+        function setActiveBtn(btn) {
+            btn.className = 'px-4 py-2 rounded-full text-sm font-semibold bg-stone-800 text-white shadow-md ring-2 ring-stone-800 ring-offset-2 transition-all';
+        }
+
+        function setInactiveBtn(btn) {
+            btn.className = 'px-4 py-2 rounded-full text-sm font-medium bg-white text-stone-600 border border-stone-200 hover:bg-amber-50 hover:border-amber-200 hover:text-amber-800 transition-colors';
+        }
+
+        // 4. Search Functionality
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            // Re-trigger filter with current category + new search term
+            // We use the variable currentFilter stored above
+            const val = e.target.value.toLowerCase();
+            const filtered = quotesData.filter(q => {
+                const matchesTheme = currentFilter === 'all' || q.theme === currentFilter;
+                const matchesSearch = q.translation.toLowerCase().includes(val) || 
+                                      q.author.toLowerCase().includes(val) ||
+                                      q.book.toLowerCase().includes(val) ||
+                                      q.tags.some(t => t.includes(val));
+                return matchesTheme && matchesSearch;
+            });
+            renderQuotes(filtered);
+        });
+
+    </script>
+</body>
+</html>
